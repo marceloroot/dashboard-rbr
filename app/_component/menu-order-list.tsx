@@ -12,12 +12,16 @@ import {
   MenuDivider,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-type OrdenationType = "ASC" | "DESC";
-const MenuOrderList = () => {
-  const [ordering, setOrdering] = useState<OrdenationType>("ASC");
-  const handClickChangeOrdering = (ordenationType: OrdenationType) => {
-    setOrdering(ordenationType);
-  };
+import { OrdenationType } from "./employee list";
+
+interface MenuOrderListProps {
+  handleOrderChange: (orderning: OrdenationType) => void;
+  orderning: OrdenationType;
+}
+const MenuOrderList = ({
+  handleOrderChange,
+  orderning,
+}: MenuOrderListProps) => {
   return (
     <Menu>
       <MenuButton
@@ -26,13 +30,13 @@ const MenuOrderList = () => {
         fontSize="15px"
         gap={2}
       >
-        Filter : {ordering}
+        Filter : {orderning}
       </MenuButton>
       <MenuList>
-        <MenuItem onClick={() => handClickChangeOrdering("ASC")}>
+        <MenuItem onClick={() => handleOrderChange("asc")}>
           Lista em forma ascendent
         </MenuItem>
-        <MenuItem onClick={() => handClickChangeOrdering("DESC")}>
+        <MenuItem onClick={() => handleOrderChange("desc")}>
           Lista em forma descendente
         </MenuItem>
       </MenuList>

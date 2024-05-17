@@ -1,15 +1,22 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import { FormControl, Input, Button } from "@chakra-ui/react";
-
-const Search = () => {
+interface SearchProps {
+  handleFilter: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleClickSearch: () => void;
+  filter: string;
+}
+const Search = ({ handleClickSearch, handleFilter, filter }: SearchProps) => {
   return (
     <FormControl p={0} m={0} position="relative">
-      {" "}
-      {/* Define position="relative" no FormControl */}
-      <Input type="email" pr="40px" />
-      <Button position="absolute" right="0" h="100%" variant="ghost" zIndex="1">
-        {" "}
-        {/* Adiciona zIndex="1" ao botão */}
+      <Input type="email" pr="40px" onChange={handleFilter} value={filter} />
+      <Button
+        position="absolute"
+        right="0"
+        h="100%"
+        variant="ghost"
+        zIndex="1"
+        onClick={handleClickSearch}
+      >
         <SearchIcon />
       </Button>
     </FormControl>

@@ -16,57 +16,66 @@ import Search from "./search";
 import { EditIcon } from "@chakra-ui/icons";
 import DialogDelete from "./dialog-delete";
 import RoundButtonFixed from "./rounded-button-fixed";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { GET } from "../api/employee-list";
 
 interface employeesI {
   id: string;
-  nome: string;
-  cargo: string;
-  departamento: string;
+  name: string;
+  role: string;
+  department: string;
 }
-const employees: employeesI[] = [
-  {
-    id: "1234",
-    nome: "Marcelo de Lima Gomes",
-    cargo: "Administrador",
-    departamento: "Financeiro",
-  },
-  {
-    id: "4321",
-    nome: "João Pedro da Silva Neto Santos",
-    cargo: "Contador",
-    departamento: "Financeiro",
-  },
-  {
-    id: "43441",
-    nome: "Lucas Augusto Santos",
-    cargo: "Analista de finança",
-    departamento: "Financeiro",
-  },
-  {
-    id: "5678",
-    nome: "Carla Oliveira",
-    cargo: "Analista de Marketing",
-    departamento: "Marketing",
-  },
-  {
-    id: "9876",
-    nome: "Rafaela Pereira",
-    cargo: "Desenvolvedor de Software",
-    departamento: "Tecnologia da Informação",
-  },
-  {
-    id: "2468",
-    nome: "Pedro Henrique Almeida",
-    cargo: "Gerente de Vendas",
-    departamento: "Vendas",
-  },
-];
+export type OrdenationType = "asc" | "desc";
 const EmployeeList = () => {
+  const [skip, setSkipped] = useState(0);
+  const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
+  const [searchOrder, setsearchOrder] = useState("");
+  const [ordering, setOrdering] = useState<OrdenationType>("asc");
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ["employees", , skip, search, searchOrder, searchOrder],
+    queryFn: () => GET(skip, filter, searchOrder),
+  });
+
+  const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
+  };
+  const handleOrderChange = (orderingChange: OrdenationType) => {
+    setOrdering(orderingChange);
+  };
+
+  const handelClickSearcher = () => {
+    setSearch(filter);
+    setsearchOrder(ordering);
+  };
+
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center mt-5">Loading...</div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center">
+        Error: {error.message}
+      </div>
+    );
+  }
+
   return (
     <Flex direction="column" height="100vh">
       <Flex justifyContent="flex-end" alignItems="center" mb={4} gap={2}>
-        <Search />
-        <MenuOrderList />
+        <Search
+          handleClickSearch={handelClickSearcher}
+          handleFilter={handleFilter}
+          filter={filter}
+        />
+        <MenuOrderList
+          orderning={ordering}
+          handleOrderChange={handleOrderChange}
+        />
       </Flex>
       <Flex flex="1" overflowY="auto">
         <TableContainer width="100%">
@@ -81,11 +90,11 @@ const EmployeeList = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {employees.map((employ) => (
+              {data?.map((employ: employeesI) => (
                 <Tr key={employ.id}>
-                  <Td>{employ.nome}</Td>
-                  <Td>{employ.cargo}</Td>
-                  <Td>{employ.departamento}</Td>
+                  <Td>{employ.name}</Td>
+                  <Td>{employ.role}</Td>
+                  <Td>{employ.department}</Td>
 
                   <Td display="flex" gap={7}>
                     <EditIcon
