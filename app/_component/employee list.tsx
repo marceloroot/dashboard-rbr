@@ -1,5 +1,11 @@
 "use client";
-import { Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  SkeletonCircle,
+  SkeletonText,
+} from "@chakra-ui/react";
 import {
   Table,
   Thead,
@@ -19,6 +25,7 @@ import RoundButtonFixed from "./rounded-button-fixed";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GET } from "../api/employee-list";
+import Link from "next/link";
 
 interface employeesI {
   id: string;
@@ -28,7 +35,7 @@ interface employeesI {
 }
 export type OrdenationType = "asc" | "desc";
 const EmployeeList = () => {
-  const [skip, setSkipped] = useState(0);
+  const [skip, setSkipped] = useState(1);
   const [filter, setFilter] = useState("");
   const [search, setSearch] = useState("");
   const [searchOrder, setsearchOrder] = useState("");
@@ -52,7 +59,10 @@ const EmployeeList = () => {
 
   if (isPending) {
     return (
-      <div className="flex items-center justify-center mt-5">Loading...</div>
+      <Box padding="6" boxShadow="lg" bg="white">
+        <SkeletonCircle size="10" />
+        <SkeletonText mt="4" noOfLines={4} spacing="4" skeletonHeight="2" />
+      </Box>
     );
   }
 
@@ -97,12 +107,16 @@ const EmployeeList = () => {
                   <Td>{employ.department}</Td>
 
                   <Td display="flex" gap={7}>
-                    <EditIcon
-                      fontSize={20}
-                      color="blue.700"
-                      cursor={"pointer"}
-                    />
-                    <DialogDelete />
+                    <Link href={`/update/${employ.id}`}>
+                      <EditIcon
+                        fontSize={20}
+                        color="blue.700"
+                        cursor={"pointer"}
+                      />
+                    </Link>
+                    <Box>
+                      <DialogDelete />
+                    </Box>
                   </Td>
                 </Tr>
               ))}
@@ -116,6 +130,19 @@ const EmployeeList = () => {
             </Tfoot>
           </Table>
         </TableContainer>
+      </Flex>
+      <Flex justifyContent="center" mt={2} alignItems="center" gap={10}>
+        <Button onClick={() => setSkipped((old) => Math.max(old - 1, 1))}>
+          Anterior
+        </Button>
+        <span>{skip}</span>
+        <Button
+          onClick={() =>
+            setSkipped((old) => (data.length - 1 >= 0 ? old + 1 : old))
+          }
+        >
+          Próxima
+        </Button>
       </Flex>
       <RoundButtonFixed />
     </Flex>
