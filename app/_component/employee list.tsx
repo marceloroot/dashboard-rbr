@@ -40,7 +40,7 @@ const EmployeeList = () => {
   const [search, setSearch] = useState("");
   const [searchOrder, setsearchOrder] = useState("");
   const [ordering, setOrdering] = useState<OrdenationType>("asc");
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["employees", , skip, search, searchOrder, searchOrder],
     queryFn: () => GET(skip, filter, searchOrder),
   });
@@ -115,7 +115,7 @@ const EmployeeList = () => {
                       />
                     </Link>
                     <Box>
-                      <DialogDelete />
+                      <DialogDelete employeeId={employ.id} refetch={refetch} />
                     </Box>
                   </Td>
                 </Tr>

@@ -30,8 +30,26 @@ const PUT = async (id: string, data: EmployeeInterface) => {
   if (!response.ok) {
     throw new Error("Conexão com a rede está com problema");
   }
-  const beneficio = await response.json();
+  const employee = await response.json();
 
-  return beneficio;
+  return employee;
 };
-export { POST, PUT };
+
+const DELETE = async (id: string) => {
+  const url = `${baseUrl}/api/employees/${id}`;
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Conexão com a rede está com problemas");
+  }
+  const employee = await response.json();
+
+  return employee;
+  employee;
+};
+export { POST, PUT, DELETE };
